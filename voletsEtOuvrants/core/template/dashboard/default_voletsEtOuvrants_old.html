@@ -1,0 +1,880 @@
+	<div class="eqLogic eqLogic-widget allowResize allowReorderCmd allowLayout #custom_layout#  #category# "
+		  style="min-height: 210px;min-width:220px; position: relative; width:#width#; height:#height#;
+				 background-color:#background-color#; color:#color#; border:#border#; border-radius:#border-radius#;#style#"
+		  data-eqType="#eqType#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#"  data-cat_color="#catcolore#" 
+		  data-version="#version#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#">
+		<span class="statusCmd"></span>
+		<!--<span class="cmd refresh pull-right cursor" data-cmd_id=""><i class="fas fa-sync"></i></span>-->
+		<center class="widget-name">
+		  <span class="reportModeVisible" style="display:none">#object_name#</span>
+		  <a href="#eqLink#" class="reportModeHidden" style="margin-right: 5px;">#name_display# </a>
+		</center> 
+		<div class="div_object#id#">
+			<div class="eqLogic-widget#id#">
+				<span class="widget-name#id#" id="spanLabel#id#">F Bureau</span>
+				<span class="cmd cmd-widget #openState_history#" data-type="info" data-cmd_id="#openStateRight_id#">
+				<span class="cmd cmd-widget #openState_history#" data-type="info" data-cmd_id="#openStateLeft_id#">
+				<span class="cmd cmd-widget #openState_history#" data-type="info" data-cmd_id="#openSlider_id#">
+				<div class="windows#id# white#id# size-m#id# cmd cmd-widget" id="idDisplay#id#">
+					<div class="rollerState#id#" id="idrollerState#id#"></div>
+					<span class="background#id#"></span>
+					
+					<div class="rangeCustom#id#" id="idrangeCustom#id#">
+						<!--<input id="fader_1" class="customSlidr#id#" type="range" orient="vertical" min="0" max="100" step="5" value="" onchange="rangeCustomvalue1#id#.value=value" />-->
+						<input id="fader_1" class="customSlidr#id#" type="range" orient="vertical" min="0" max="100" step="1" value=""/>
+						<output id="rangeCustomvalue1#id#" for="fader_1" class="position#id#"></output>
+						<span class="cmd cmd-widget #rollerState_history#" data-type="info" data-cmd_id="#rollerState_id#">
+					</div>
+					
+					<!-- gestion des boutons -->
+					<div class="cmd-widget#id#" id="divBtn#id#">
+					<a class="btn btn-lg btn-default action cmdName tooltips" title="Up"><i class="fa fa-arrow-up" id="up#id#"></i></a>
+					<a class="btn btn-lg btn-default action cmdName tooltips" title="Stop"><i class="fa	fa-stop" id="stop#id#"></i></a>
+					<a class="btn btn-lg btn-default action cmdName tooltips" title="Down"><i class="fa fa-arrow-down" id="down#id#"></i></a>
+					</div>
+				</div>
+			</div>
+		 </div>
+	</div>
+
+
+	<script>
+		console.log("Entree dans le plugin ouvrants et Vrs | " + "eqlogic : " + '#eqLogic_id#' + " | uid : " + '#uid#' );
+		defineDesign();
+		defineRollerTime('idrollerState#id#','down');
+		
+		jeedom.cmd.update['#openSlider_id#'] = function(_options) {
+			if ('##id#_cfgWindowType#' == "velux"){
+				if (_options.display_value == '100') {			
+					$("."+'##id#_cfgWindowType#' + "#id#").toggleClass("open#id#", true);
+				} else {
+					$("."+'##id#_cfgWindowType#' + "#id#").toggleClass("open#id#", false);
+				}
+			}
+		}
+		jeedom.cmd.update['#openSlider_id#']({display_value:'#openState#',valueDate:'#valueDate#'});
+		
+		
+		//Update roller state
+		jeedom.cmd.update['#rollerState_id#'] = function(_options) {
+			console.log("Update roller state : " + _options.display_value); 
+			$("#idrollerState#id#").css("height", (100-_options.display_value)+ "%");
+			
+			$('.customSlidr#id#').next().text(_options.display_value);
+			$('.customSlidr#id#').value((100-_options.display_value));
+
+          	var defineHeight = (($('.rangeCustom#id#').height()-22)*(100-_options.display_value))/100;
+			$('.customSlidr#id#').next().css("top", defineHeight + "px");
+		}	
+		jeedom.cmd.update['#rollerState_id#']({display_value:'#rollerState#',valueDate:'#valueDate#'});
+		
+		//Update openState right
+		jeedom.cmd.update['#openStateRight_id#'] = function(_options) {
+			var addClass=false;
+			if (_options.display_value==1) {
+				addClass=true;
+            }
+          
+			if ('##id#_cfgWindowType#' == "baie") {
+				$("."+'##id#_cfgWindowType#' + "#id#").toggleClass("slideRight#id#", addClass);
+			} else if ('##id#_cfgWindowType#' == "velux"){
+				$("."+'##id#_cfgWindowType#' + "#id#").toggleClass("open#id#", addClass);
+			} else {
+				$("."+'##id#_cfgWindowType#' + "#id#").toggleClass("openRight#id#", addClass);
+			}		
+		}	
+		jeedom.cmd.update['#openStateRight_id#']({display_value:'#openStateRight#',valueDate:'#valueDate#'});
+
+		
+		//Update openState left
+		jeedom.cmd.update['#openStateLeft_id#'] = function(_options) {
+			var addClass=false;
+			if (_options.display_value==1) {
+				addClass=true;
+            }
+          
+			if ('##id#_cfgWindowType#' == "baie") {
+				$("."+'##id#_cfgWindowType#' + "#id#").toggleClass("slideLeft#id#", addClass);
+			}  else if ('##id#_cfgWindowType#' == "velux"){
+				$("."+'##id#_cfgWindowType#' + "#id#").toggleClass("open#id#", addClass); 
+              	$(".rollerState#id#").toggleClass("open#id#", addClass); 
+			} else {
+				$("."+'##id#_cfgWindowType#' + "#id#").toggleClass("openLeft#id#", addClass);
+			}
+		}	
+		jeedom.cmd.update['#openStateLeft_id#']({display_value:'#openStateLeft#',valueDate:'#valueDate#'});
+
+		//Listen evenement sur bouton action jeedom up
+		jeedom.cmd.update['#up_id#'] = function(_options) {
+			console.log("Update bouton up"); 
+		}	
+		jeedom.cmd.update['#up_id#']({display_value:'#up#',valueDate:'#valueDate#'});
+		
+		//Action Slider
+		var execSlider#id#;
+		$("input.customSlidr#id#").on("input", function() {
+			var defineHeight = (($('.rangeCustom#id#').height()-22)*$(this).val())/100;
+			$(this).siblings("output").css("top", defineHeight + "px");
+          	$('.customSlidr#id#').next().text((100-$(this).val()));
+
+			clearTimeout(execSlider#id#);
+			var rollerSliderValue#id#=(100-$(this).val());
+			execSlider#id#=setTimeout(function(){
+				jeedom.cmd.execute({id :'#rollerSlider_id#', value : {slider : rollerSliderValue#id#}})
+			}, 1000); 
+		});
+		
+		//Action on change slider
+		$("input.customSlidr#id#").change("input", function() {
+			console.log("Input slider change");
+			$(this)
+				.parent()
+				.siblings(".rollerState#id#")
+				.css("height", $(this).val() + "%")
+				.removeClass("down#id#")
+				.removeClass("up#id#");    
+			defineRollerTime('idrollerState#id#','up');
+		});
+		
+		//listener bouton stop
+		$('#stop#id#').click(function() {
+			console.log("action sur le bouton stop");
+			jeedom.cmd.execute({id: '#stop_id#'});
+		});
+		
+		//listener bouton monter
+		$('#up#id#').click(function() {
+			console.log("action sur le bouton monter");
+			defineRollerTime('idrollerState#id#','up');
+			$("#idrollerState#id#").css("height", "0%");
+			jeedom.cmd.execute({id: '#up_id#'});
+		});
+		
+		
+		//listener bouton descendre
+		$('#down#id#').click(function() {
+			console.log("action sur le bouton descendre");
+			defineRollerTime('idrollerState#id#','down');	
+			$("#idrollerState#id#").css("height", "100%");
+			jeedom.cmd.execute({id: '#down_id#'});
+		});
+
+		function defineDesign(){			
+			var classType='##id#_cfgWindowType#' + "#id# " + '##id#_cfgWindowColor#' + "#id# " + '##id#_cfgWindowSize#' + "#id#";	  
+			
+			console.log('Define design : ' + classType);
+			if ('##id#_cfgWindowType#' == "garage") {
+				$(".cmd-widget#id#").hide();
+			}
+			
+			$("#idDisplay#id#").attr("class",classType);
+			$("."+'rollerState' + "#id#").attr("class","#id# " + "rollerState#id# " + '##id#_cfRollerSliderColor#' + "Roller#id#" );	
+
+			//manage label
+			if('##id#_cfgLabel#'.length > 0 && !'##id#_cfgLabel#'.includes("label")) {
+				$('#spanLabel#id#').html('##id#_cfgLabel#');
+			} else {
+				$(".widget-name#id#").hide();
+			}
+          
+			if('##id#_cfgColorLabel#'.length > 0) {
+				$('#spanLabel#id#').css('background-color', '##id#_cfgColorLabel#');
+			}
+			
+			//manage border
+			if('##id#_cfgColorBorderEq#'.length > 0) {
+				$('.eqLogic-widget#id#').css('border-color','##id#_cfgColorBorderEq#');
+			}
+          
+			if('##id#_cfgTypeBorderEq#'.length > 0) {
+				$('.eqLogic-widget#id#').css('border-style','##id#_cfgTypeBorderEq#');
+			} else {
+				$('.eqLogic-widget#id#').css('border-style','none');
+			}
+          	var newWidth = $('.##id#_cfgWindowSize#' + "#id#").width() + $('.rangeCustom#id#').width() + 80;
+          	$('.eqLogic-widget#id#').width(newWidth + "px")
+			
+			//define if button have to be displayed
+			if ('##id#_cfgCmdUp#' != '' && '##id#_cfgCmdStop#' != '' && '##id#_cfgCmdDown#' != '') {
+				$('#divBtn#id#').show();
+			} else {
+				$('#divBtn#id#').hide();
+			}
+			
+			//manage color of roller slider
+			if('##id#_cfgColorRollerSlider#'.length > 0) {
+              	document.querySelector('.customSlidr#id#').style.setProperty('--track-background', '##id#_cfgColorRollerSlider#');
+			}
+			
+			if('##id#_cfgColorRollerSliderInfo#'.length > 0) {
+				$('#'+'rangeCustomvalue1#id#').css('border','##id#_cfgColorRollerSliderInfo#');
+			}
+			
+			//manage color of open slider
+			//cfgColorOpenSlider
+			//cfgColorOpenSliderInfo
+          
+          	//Set background image
+          	if('##id#_cfgBackgroundImg#'.length > 0) {
+              $('.background#id#').css('background-image', "url(" + '##id#_cfgBackgroundImg#'+")");
+              if('##id#_cfgRotateBackgroundImg#'.length > 0 && '##id#_cfgRotateBackgroundImg#' == '1') {
+                $('.background#id#').css('transform','translateZ(-50px) rotate(0.25turn)');
+              }
+            }
+          	
+		}
+		
+		
+		function defineRollerTime(idStateRoller,cmdType) {
+			console.log('defineRollerTime');
+			jeedom.cmd.execute({ id: '#rollerTime_id#', value: {'title': cmdType, 'message': ''},
+                          success:  function($result) {
+							console.log("Get rollertime : " + $result);
+                            $('#'+idStateRoller).css("transition", "height "+ $result  + "s linear");
+                          }
+                         });							
+			
+		}
+	</script>
+	<style>
+	/* css mise en situation et explication */
+	.div_object#id# {
+	  margin: auto;
+	  position: relative;
+	}
+	.eqLogic-widget#id#>.widget-name#id# {
+	  display: block;
+	  //padding: 4px 0;
+	  text-align:center;
+	  background-color: #424242;
+	  border-radius: 10px;
+	  //margin-bottom: 4px!important;
+	  color:white;
+      height:20px;
+	}
+	  
+     /*
+	.eqLogic-widget-windows#id#>.widget-name#id#{
+	  display: block;
+	  padding: 4px 0;
+	  text-align:center;
+	  background-color: #424242;
+	  border-radius: 10px;
+	  margin-bottom: 4px!important;
+      height:10px;
+	}
+      */
+      
+	.tooltip#id# {
+	  opacity: 1;
+	  background: rgba(8, 70, 34, 0.93);
+	  position: absolute;
+	  display: block;
+	  margin: auto;
+	  padding: 10px;
+	  width: 200px;
+	  height: 65px;
+	  left: 2.5%;
+	  text-align:center;
+	  border-radius: 5px;
+	}
+	.tooltip#id#.pos#id# {
+	  margin-top: 156px;
+	}
+
+	.eqLogic-widget#id# {
+	  //background-color: rgb(138, 134, 133);
+	  border-style: dashed;
+	  border-color:rgb(138, 134, 133);
+	  border-width: 1px;
+	  padding: 5px;
+	  float: left;
+	  width: 95%;
+	  margin: 2.5%;
+	  border-radius: 10px;
+	}
+
+	.cmd-widget#id# {
+	  width: 95px;
+	  margin: 15px auto 20px;
+	}
+	/* dimension des ouvrants */
+	.size-s#id# {
+	  width: 100px;
+	  height: 75px;
+	}
+	.size-m#id# {
+	  width: 200px;
+	  height: 150px;
+	}
+	.size-l#id# {
+	  width: 400px;
+	  height: 300px;
+	}
+	.size-xl#id# {
+	  width: 500px;
+	  height: 300px;
+	}
+	
+	.porte#id#.size-s#id# {
+	  width: 120px;
+	  height: 275px;
+	}
+	.porte#id#.size-m#id# {
+	  width: 180px;
+	  height: 300px;
+	}
+
+	.size-uk#id#{
+	  width: 268px;
+	  height: 196px;
+	}
+
+	.size-mk#id#{
+	  width: 156px;
+	  height: 196px;
+	}
+	
+		/* couleurs */
+	.white#id# {
+	  border: 5px solid #e8e7e7;
+	  box-shadow: inset 0 0 0 5px gainsboro, 0 1px 2px 0px rgba(0, 0, 0, 0.75);
+	}
+	
+	.black#id# {
+	  border: 5px solid #353535;
+	  box-shadow: inset 0 0 0 5px #2d2d2d, 0 1px 2px 0px rgba(0, 0, 0, 0.75);
+	}
+	
+	.black#id#:before,
+	.black#id#:after {
+	  border: 10px solid #353535!important;
+	}
+	
+	.beige#id# {
+	  border: 5px solid #DEB887;
+	  box-shadow: inset 0 0 0 5px #D2B48C, 0 1px 2px 0px rgba(0, 0, 0, 0.75);
+	}
+	
+	.beige#id#:before,
+	.beige#id#:after {
+	  border: 10px solid #DEB887!important;
+	}
+	
+	.wood#id# {
+	  border: 5px solid #6d3e15;
+	  box-shadow: inset 0 0 0 5px #583312, 0 1px 2px 0px rgba(0, 0, 0, 0.75);
+	}
+	
+	.wood#id#:before,
+	.wood#id#:after {
+	  border: 10px solid #6d3e15!important;
+	}
+
+	/* Volet roulant */
+	.rollerState#id# {
+	  display: block;
+	  position: absolute;
+	  width: calc(100% - 10px);
+	  height: 0%;
+	  max-height: calc(100% - 10px);
+	  margin: 0px;
+	  padding: 0;
+	  left: 5px;
+	  right: 5px;
+	  top: 5px;
+	  border-bottom: 4px solid white;
+	  border-left: 2px solid white;
+	  border-right: 2px solid white;
+	  transform: translateZ(-10px);
+	  background-size: 10px 15px !important;
+	  //transition:height 0s linear .75s ;
+	}
+	.garage#id# .rollerState#id# {
+	  left: 0;
+	  right: 0;
+	  top: 0;
+	  width: 100%;
+	  max-height: 100%;
+	  transform: translateZ(-1px);
+	}
+	
+     .whiteRoller#id#.rollerState#id#{
+	  background: linear-gradient(0deg, #d8d8d8 10%, transparent 25%) 5px 0,
+		linear-gradient(0deg, transparent 45%, #d2d2d2 76%),
+		linear-gradient(
+		  0deg,
+		  transparent 26%,
+		  #d0d0d0 38%,
+		  #c3c3c3 59%,
+		  transparent 60%
+		),
+		#7d7d7d;
+	}
+	
+
+	.whiteRoller#id#.rollerState#id#{
+	  border: 4px solid #464646;
+	  border-left: 2px solid #232323;
+	  border-right: 2px solid #232323;
+	}
+
+		
+	.blackRoller#id#.rollerState#id#{
+	  background: linear-gradient(0deg, #292929 10%, transparent 25%) 5px 0,
+		linear-gradient(0deg, transparent 45%, #383838 76%),
+		linear-gradient(
+		  0deg,
+		  transparent 26%,
+		  #222 38%,
+		  #252525 59%,
+		  transparent 60%
+		),
+		#2f2f2f;
+	}
+	
+
+	.blackRoller#id#.rollerState#id#{
+	  border: 4px solid #464646;
+	  border-left: 2px solid #232323;
+	  border-right: 2px solid #232323;
+	}
+
+    .woodRoller#id#.rollerState#id#{
+	  background: linear-gradient(0deg, #573212 10%, transparent 25%) 5px 0,
+		linear-gradient(0deg, transparent 45%, #6d3e15 76%),
+		linear-gradient(
+		  0deg,
+		  transparent 26%,
+		  #4c2b0e 38%,
+		  #3e240c 59%,
+		  transparent 60%
+		),
+		#774212;
+	}
+	
+	.woodRoller#id#.rollerState#id#{
+	  border: 4px solid #573212;
+	  border-left: 2px solid #6d3e15;
+	  border-right: 2px solid #6d3e15;
+	}
+
+
+	.velux#id#.rollerState#id# {
+	  background: linear-gradient(0deg, #292929 10%, transparent 25%) 5px 0,
+		linear-gradient(0deg, transparent 45%, #383838 76%),
+		linear-gradient(
+		  0deg,
+		  transparent 26%,
+		  #222 38%,
+		  #252525 59%,
+		  transparent 60%
+		),
+		#2f2f2f;
+	}
+	
+	.velux#id#.rollerState#id# {
+	  border: 4px solid #464646;
+	  border-left: 2px solid #232323;
+	  border-right: 2px solid #232323;
+	}
+	
+	/* css widget windows & baie + volet*/
+	.cmd-widget#id# a.btn-default {
+				display: inline-block;
+				width: 32px;
+				margin: -2px;
+				border: none;
+				border-radius: 0;
+	}
+	.cmd-widget#id# a.btn-default:hover{background: white!important;color: #4a4a4a;}
+	.cmd-widget#id# a.btn-default:first-child{border-radius: 4px  0 0 4px}
+	.cmd-widget#id# a.btn-default:last-child{border-radius: 0 4px 4px 0 }
+	/* modèles */
+	.windows#id#,
+	.baie#id#,
+	.porte#id#,
+	.garage#id#,
+	.velux#id#{
+	  position: relative;
+	  display: block;
+	  background: transparent;
+	  padding: 5px;
+	  margin: 20px 40px 35px;
+	  transform-style: preserve-3d;
+	  perspective: 300px;
+	  z-index: 1;
+	  float: left;
+	}
+	.garage#id# {
+	  border-bottom: none!important;
+	  box-shadow: none;
+	  padding: 0;
+	}
+	/* vitre de baie & fenetre */
+	.windows#id#:before,
+	.windows#id#:after,
+	.baie#id#:before,
+	.baie#id#:after,
+	.porte#id#.size-s#id#:before,
+	.velux#id#:before,
+	.porte#id#:before,
+	.porte#id#:after{
+	  display: block;
+	  position: absolute;
+	  content: "";
+	  border: 10px solid white;
+	  width: 47.25%;
+	  height: calc(100% - 10px);
+	  top: 5px;
+	  margin: 0;
+		box-shadow: 0 1px 2px black, inset 0 0 5px rgba(0, 0, 0, 0.75);
+	  z-index: 20;
+	  background: linear-gradient(
+		  135deg,
+		  rgba(183, 222, 237, 0.25) 0%,
+		  rgba(255, 255, 255, 0.35) 20%,
+		  rgba(113, 206, 239, 0.25) 50%,
+		  rgba(33, 180, 226, 0.15) 51%,
+		  rgba(183, 222, 237, 0.15) 100%
+		),
+		linear-gradient(
+		  -165deg,
+		  rgba(224, 243, 250, 0.45) 0%,
+		  rgba(216, 240, 252, 0.25) 50%,
+		  rgba(184, 226, 246, 0.35) 51%,
+		  rgba(182, 223, 253, 0.35) 100%
+		);
+	  
+	}
+	
+	/* vitre de baie & fenetre */
+	.windows#id#.size-l#id#:before,
+	.windows#id#.size-l#id#:after,
+	.porte#id#.size-l#id#:before,
+	.porte#id#.size-l#id#:after{
+	  display: block;
+	  position: absolute;
+	  content: "";
+	  border: 10px solid white;
+	  width: 48.72%;
+	  height: calc(100% - 10px);
+	  top: 5px;
+	  margin: 0;
+		box-shadow: 0 1px 2px black, inset 0 0 5px rgba(0, 0, 0, 0.75);
+	  z-index: 20;
+	  background: linear-gradient(
+		  135deg,
+		  rgba(183, 222, 237, 0.25) 0%,
+		  rgba(255, 255, 255, 0.35) 20%,
+		  rgba(113, 206, 239, 0.25) 50%,
+		  rgba(33, 180, 226, 0.15) 51%,
+		  rgba(183, 222, 237, 0.15) 100%
+		),
+		linear-gradient(
+		  -165deg,
+		  rgba(224, 243, 250, 0.45) 0%,
+		  rgba(216, 240, 252, 0.25) 50%,
+		  rgba(184, 226, 246, 0.35) 51%,
+		  rgba(182, 223, 253, 0.35) 100%
+		);
+	}
+	
+	/* vitre de baie & fenetre */
+	.windows#id#.size-xl#id#:before,
+	.windows#id#.size-xl#id#:after,
+	.porte#id#.size-xl#id#:before,
+	.porte#id#.size-xl#id#:after{
+	  display: block;
+	  position: absolute;
+	  content: "";
+	  border: 10px solid white;
+	  width: 48.98%;
+	  height: calc(100% - 10px);
+	  top: 5px;
+	  margin: 0;
+		box-shadow: 0 1px 2px black, inset 0 0 5px rgba(0, 0, 0, 0.75);
+	  z-index: 20;
+	  background: linear-gradient(
+		  135deg,
+		  rgba(183, 222, 237, 0.25) 0%,
+		  rgba(255, 255, 255, 0.35) 20%,
+		  rgba(113, 206, 239, 0.25) 50%,
+		  rgba(33, 180, 226, 0.15) 51%,
+		  rgba(183, 222, 237, 0.15) 100%
+		),
+		linear-gradient(
+		  -165deg,
+		  rgba(224, 243, 250, 0.45) 0%,
+		  rgba(216, 240, 252, 0.25) 50%,
+		  rgba(184, 226, 246, 0.35) 51%,
+		  rgba(182, 223, 253, 0.35) 100%
+		);
+	}
+	
+	.porte#id#.size-s#id#:after{display:none;}
+	.porte#id#.size-s#id#:before{width: 93.5%;}
+
+	.velux#id#.size-uk#id#:before{width: 96.5%;}
+	.velux#id#.size-uk#id#:after{display:none;}
+
+	.velux#id#.size-mk#id#:before{width: 93.5%;}
+	.velux#id#.size-mk#id#:after{display:none;}
+
+	.baie#id#:before,
+	.baie#id#:after {
+	  width: 50% !important;
+	}
+	.baie#id#:after {
+	  height: calc(100% - 9px) !important;
+	  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), inset 0 0 5px rgba(0, 0, 0, 0.75);
+	}
+	.baie#id#:before {
+	  box-shadow: 0 1px 2px transparent, inset 0 0 5px rgba(0, 0, 0, 0.75);
+	  border: 10px solid #f1f0f0;
+	}
+	.windows#id#:before,
+	.baie#id#:before,
+	.porte#id#:before{
+	  left: 5px;
+	  transition: all 1s ease;
+	}
+	.windows#id#:after,
+	.baie#id#:after,
+	.porte#id#:after {
+	  right: 5px;
+	  transition: all 1s ease;
+	}
+	/* état ouvert */
+	.baie#id#.slideRight#id#:after {
+	  right: 40%;
+	  transition: all 1s ease;
+	}
+	
+	.baie#id#.slideLeft#id#:before {
+	  left: 40%;
+	  transition: all 1s ease;
+	}
+	
+	.windows#id#.open#id#:before,
+	.porte#id#.size-s#id#.open#id#:before,
+	.porte#id#.size-m#id#.open#id#:before{
+	  transform: rotateY(-80deg)translateZ(5px);
+	  transition: all 1s ease;
+	  transform-origin: 0 0;
+	}
+
+	.windows#id#.openLeft#id#:before,
+	.porte#id#.size-s#id#.openLeft#id#:before,
+	.porte#id#.size-m#id#.openLeft#id#:before{
+	  transform: rotateY(-80deg)translateZ(5px);
+	  transition: all 1s ease;
+	  transform-origin: 0 0;
+	}
+	
+	.windows#id#.openRight#id#:after,
+	.porte#id#.size-s#id#.openRight#id#:before,
+	.porte#id#.size-m#id#.openRight#id#:after {
+	  transform: rotateY(80deg)translateZ(5px);
+	  transition: all 1s ease;
+	  transform-origin: 100% 0;
+	}
+	
+	/*
+	.windows#id#.open#id#:after,
+	.porte#id#.size-s#id#.open#id#:before,
+	.porte#id#.size-m#id#.open#id#:after {
+	  transform: rotateY(80deg)translateZ(5px);
+	  transition: all 1s ease;
+	  transform-origin: 100% 0;
+	}
+	*/
+	
+	.velux#id#.open#id#:before{
+	  transform: rotateX(-30deg)translateZ(5px);
+	  transition: all 1s ease;
+	  transform-origin: 0 0;
+	  //transform: skewX(50deg);
+	  //transform-origin: 100% -30%;
+	}
+
+      
+    .rollerState#id#.open#id#{
+      transform: rotateX(-30deg)translateY(15px)translateX(0px)translateZ(-40px);
+	  transition: all 1s ease;
+	  //transform-origin: 80% 110%;
+     }
+
+
+
+	/*gestion place slider si ouvrant ouvert */
+	.windows#id#.open#id# .rangeCustom#id#,
+	.porte#id#.size-m#id#.open#id# .rangeCustom#id#{
+	  margin-left: -35px;
+	}
+	
+	/*
+	.windows#id#.open#id# .rangeCustom#id#:hover,
+	.porte#id#.size-m#id#.open#id# .rangeCustom#id#:hover {
+	  margin-left: -37px;
+	}
+*/
+
+	/* control slider pour volet roulant */
+	.rangeCustom#id# {
+	  position: absolute;
+	  display: block;
+	  top: 0;
+	  left: 0;
+	  width: 20px;
+	  margin-top: 0px;
+	  transition: all 1s ease;
+	  margin-left: -25px;
+	  height: 100%;
+	  padding: 0;
+	}
+      
+	
+
+	/* affichage du pourcentage */
+	.rangeCustom#id# output {
+	  position: absolute;
+	  background:white;
+	  height:28px;
+	  width:28px;
+	  font-size: 0.6em;
+	  text-align: center; 
+	  color: black; 
+	  border-radius:50%;
+	  border: 2px solid green;
+      right: 11px;
+	  z-index:3000;
+	  cursor: default;
+	  pointer-events: none;
+	  padding-top: 1.1em;
+      margin-top:-2px;
+	}
+
+	/* input rangeCustom vertical */
+	.rangeCustom#id# input.customSlidr#id#[type="range"][orient="vertical"] {
+      writing-mode: bt-lr; /* IE */
+	  -webkit-appearance:slider-vertical;
+	  width: 0;
+	  height: calc(100% - 10px);
+	  position: absolute;
+	  display: block;
+	  top: 5px;
+	  transform: rotate(-180deg);
+	  z-index: 1000;
+	}
+     
+      /*
+     .rangeCustom#id# input.customSlidr#id#[type="range"][orient="vertical"] {
+	  padding: 0;
+	  margin: 0px 15px;
+	  z-index: 1000;
+	  pointer-events: none;
+	  cursor: default;
+	  transition: all 0.3s ease;
+	  opacity: 1;
+	}
+      */
+
+	.rangeCustom#id# input.customSlidr#id#[type="range"]:focus {
+	  outline: none;
+	}
+    
+      /*
+	.rangeCustom#id# input.customSlidr#id#[type="range"][orient="vertical"]::-webkit-slider-runnable-track{
+	  width: 5px;
+	  height: 100%;
+	  cursor: pointer;
+	  animate: 0.2s;
+	  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+	  border-radius: 5px;
+      //background: green;
+      background:var(--track-background, green);
+	  -webkit-appearance: none;
+      margin-left:10px;
+	}
+
+	.rangeCustom#id# input.customSlidr#id#[type="range"]:focus::-webkit-slider-runnable-track{
+	   background:var(--track-background, green);
+	}
+*/
+      .customSlidr#id#::-webkit-slider-runnable-track{
+	  width: 5px;
+	  height: 100%;
+	  cursor: pointer;
+	  animate: 0.2s;
+	  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+	  border-radius: 5px;
+      //background: green;
+      background:var(--track-background, green);
+	  -webkit-appearance: none;
+      margin-left:10px;
+	}
+
+	.customSlidr#id#:focus::-webkit-slider-runnable-track{
+	   background:var(--track-background, green);
+	}
+      
+	/*bouton du curseur*/
+	.rangeCustom#id# input.customSlidr#id#[type="range"][orient="vertical"]::-webkit-slider-thumb{
+      	-webkit-appearance: none;
+		pointer-events: visible;
+		cursor: pointer;
+		border: none;
+		height: 5px;
+		width: 5px;
+		border-radius: 50%;
+      	margin:0 -8px;
+	}
+      
+	/* fond de fenêtre */
+	.background#id# {
+	  display: block;
+	  background-repeat: no-repeat;
+	  background-size: cover;
+	  width: 100%;
+	  height: 100%;
+	  transform: translateZ(-11px);
+	  //animation: day 360s infinite;
+	  box-shadow: inset 0 0 20px 10px rgba(0, 0, 0, 0.25);
+	}
+      
+    .rotateBackground#id#:before {
+      -webkit-transform: rotate(90deg);
+      -moz-transform: rotate(90deg);
+      -ms-transform: rotate(90deg);
+      -o-transform: rotate(90deg);
+      transform: rotate(90deg);
+	}
+	/* animation simulation jour nuit 
+	@-keyframes day {
+	  0% {
+		filter:brightness(1)contrast(1) grayscale(0);
+	  }
+	  50% {
+		filter:brightness(0.5) contrast(1.5) grayscale(1);
+	  }
+	  100% {
+		filter:brightness(1)contrast(1) grayscale(0);
+	  }
+	}
+	@-webkit-keyframes day {
+	  0% {
+		-webkit-filter:brightness(1) contrast(1) grayscale(0);
+	  }
+	  50% {
+		-webkit-filter:brightness(0.5) contrast(1.5) grayscale(1);
+	  }
+	  100% {
+		-webkit-filter:brightness(1)contrast(1) grayscale(0);
+	  }
+	}
+      */
+	.up#id#{height:0!important;}
+	.down#id#{height:100%!important;}
+	.stop#id#{height:50%!important;}
+	</style>

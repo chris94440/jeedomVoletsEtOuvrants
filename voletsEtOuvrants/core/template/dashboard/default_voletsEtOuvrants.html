@@ -1,0 +1,935 @@
+	<div class="eqLogic eqLogic-widget allowResize allowReorderCmd allowLayout #custom_layout#  #category# "
+		  style="min-height: 210px;min-width:220px; position: relative; width:#width#; height:#height#;
+				 background-color:#background-color#; color:#color#; border:#border#; border-radius:#border-radius#;#style#"
+		  data-eqType="#eqType#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#"  data-cat_color="#catcolore#" 
+		  data-version="#version#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#">
+		<span class="statusCmd"></span>
+		<center class="widget-name">
+		  <span class="reportModeVisible" style="display:none">#object_name#</span>
+		  <a href="#eqLink#" class="reportModeHidden" style="margin-right: 5px;">#name_display# </a>
+		</center> 
+		<div class="div_object">
+			<div class="eqLogicWidget">
+              	<center><span class="spanLabelRS">Windows</span></center>
+				<span class="cmd cmd-widget #openState_history#" data-type="info" data-cmd_id="#openStateRight_id#">
+				<span class="cmd cmd-widget #openState_history#" data-type="info" data-cmd_id="#openStateLeft_id#">
+				<span class="cmd cmd-widget #openState_history#" data-type="info" data-cmd_id="#openSlider_id#">
+                  <div class="fenetre">
+					<div class="rollerState" id="idrollerState"></div>
+					<span class="background"></span>
+					
+					<div class="rangeCustom" id="idrangeCustom">
+						<input id="fader_1" class="customSlidr" id="idCustomSlidr" type="range" orient="vertical" min="0" max="100" step="1" value=""/>
+						<output id="rangeCustomvalue1" for="fader_1" class="position"></output>
+						<span class="cmd cmd-widget #rollerState_history#" data-type="info" data-cmd_id="#rollerState_id#">
+					</div>
+					
+					<!-- gestion des boutons -->
+					<center>
+                    	<div class="cmdWidgetV2">
+                              <div class="bouton" id="btn_up"><i class="fa fa-arrow-up faPosition"></i></div>
+                              <div class="bouton" id="btn_stop"><i class="fa fa-stop faPosition"></i></div>
+                              <div class="bouton" id="btn_down"><i class="fa fa-arrow-down faPosition"></i></div>
+                        </div>
+              		</center>
+				</div>
+			</div>
+		 </div>
+	</div>
+	<!--<link rel="stylesheet" href="plugins/\voletsEtOuvrants/core/template/dashboard/default_voletsEtOuvrants.css">-->
+
+	<script>
+		console.log("Entree dans le plugin ouvrants et Vrs | " + "eqlogic : " + '#eqLogic_id#' + " | uid : " + '#uid#' );
+		defineDesign('.eqLogic[data-eqLogic_id=' +'#id#' +']','##id#_cfgWindowType#' , '##id#_cfgWindowColor#' , '##id#_cfgWindowSize#','##id#_cfRollerSliderColor#','##id#_cfgLabel#','##id#_cfgColorLabel#','##id#_cfgColorBorderEq#','##id#_cfgTypeBorderEq#','##id#_cfgColorRollerSlider#','##id#_cfgColorRollerSliderInfo#','##id#_cfgCmdDown#','##id#_cfgCmdStop#','##id#_cfgCmdUp#','##id#_cfgBackgroundImg#','##id#_cfgWidthBorderEq#');
+		
+	    defineRollerTime('#id#','down','#rollerTime_id#');
+		
+		jeedom.cmd.update['#openSlider_id#'] = function(_options) {
+			if ('##id#_cfgWindowType#' == "velux"){
+				if (_options.display_value == '100') {			
+					$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .' +'##id#_cfgWindowType#' ).toggleClass("open", true);
+				} else {
+					$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .' +'##id#_cfgWindowType#').toggleClass("open", false);
+				}
+			}
+		}
+		jeedom.cmd.update['#openSlider_id#']({display_value:'#openState#',valueDate:'#valueDate#'});
+		
+		
+		//Update roller state
+		jeedom.cmd.update['#rollerState_id#'] = function(_options) {
+			console.log("Update roller state : " + _options.display_value); 
+			$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .rollerState').css("height", (100-_options.display_value)+ "%");
+			$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .customSlidr').next().text(_options.display_value);
+			$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .customSlidr').value((100-_options.display_value));
+			
+			var defineHeight = (($('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .rangeCustom').height()-22)*(100-_options.display_value))/100;
+			$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .customSlidr').next().css("top", defineHeight + "px");
+		}	
+		jeedom.cmd.update['#rollerState_id#']({display_value:'#rollerState#',valueDate:'#valueDate#'});
+		
+		//Update openState right
+		jeedom.cmd.update['#openStateRight_id#'] = function(_options) {
+          	console.log("openStateRight_id ? " + _options.display_value);
+			var addClass=false;
+			if (_options.display_value==1) {
+				addClass=true;
+            } else {
+              	if (_options.display_value !=0) {
+                  	return;
+                }
+            }
+          
+			if ('##id#_cfgWindowType#' == "baie") {
+				$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .' +'##id#_cfgWindowType#').toggleClass("slideRight", addClass);
+			} else if ('##id#_cfgWindowType#' == "velux"){
+				$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .' +'##id#_cfgWindowType#').toggleClass("open", addClass);
+              	$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .rollerState').toggleClass("open", addClass); 
+			} else {
+				$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .' +'##id#_cfgWindowType#').toggleClass("openRight", addClass);
+			}		
+		}	
+		jeedom.cmd.update['#openStateRight_id#']({display_value:'#openStateRight#',valueDate:'#valueDate#'});
+
+		
+		//Update openState left
+		jeedom.cmd.update['#openStateLeft_id#'] = function(_options) {
+          console.log("openStateLeft_id ? " + _options.display_value);
+			var addClass=false;
+			if (_options.display_value==1) {
+				addClass=true;
+            } else {
+              	if (_options.display_value !=0) {
+                  	return;
+                }
+            }
+          
+			if ('##id#_cfgWindowType#' == "baie") {
+				$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .' + '##id#_cfgWindowType#' ).toggleClass("slideLeft", addClass);
+			}  else if ('##id#_cfgWindowType#' == "velux"){
+				$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .' + '##id#_cfgWindowType#' ).toggleClass("open", addClass); 
+              	$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .rollerState').toggleClass("open", addClass); 
+			} else {
+				$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .' +'##id#_cfgWindowType#' + "#id#").toggleClass("openLeft", addClass);
+			}
+		}	
+		jeedom.cmd.update['#openStateLeft_id#']({display_value:'#openStateLeft#',valueDate:'#valueDate#'});
+				
+		//Action Slider
+		var execSlider#id#;
+		$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' input.customSlidr').on("input", function() {
+          	console.log("Input slider on");
+			var defineHeight = (($('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .rangeCustom').height()-22)*$(this).val())/100;
+			$(this).siblings("output").css("top", defineHeight + "px");
+          	$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .customSlidr').next().text((100-$(this).val()));
+			
+			clearTimeout(execSlider#id#);
+			var rollerSliderValue#id#=(100-$(this).val());
+			execSlider#id#=setTimeout(function(){
+				jeedom.cmd.execute({id :'#rollerSlider_id#', value : {slider : rollerSliderValue#id#}})
+			}, 500); 
+		});
+		
+		//Action on change slider
+		$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' input.customSlidr').change("input", function() {
+			console.log("Input slider change");
+			$(this)
+				.parent()
+				.siblings(".rollerState")
+				.css("height", $(this).val() + "%")
+				//.removeClass("down#id#")
+				//.removeClass("up#id#");    
+			//defineRollerTime('#id#','up','#rollerTime_id#','#up_id#');
+          	defineRollerTime('#id#','up','#rollerTime_id#');
+		});
+      
+      	$('.eqLogic[data-eqLogic_id=' +'#id#' +']'+ ' .bouton').click(function(){
+          	var action = this.id.replace('btn_', '');
+          	
+          	if (action == 'up') {
+              	defineRollerTime('#id#',action,'#rollerTime_id#','#up_id#');
+            } else if (action == 'down') {
+              	defineRollerTime('#id#',action,'#rollerTime_id#','#down_id#');
+            } else if (action == 'stop') {
+              	defineRollerTime('#id#',action,'#rollerTime_id#','#stop_id#');
+            } else {
+              	console.log('Action inconnue');
+            }
+		});	
+		
+
+		function defineDesign(eqId,wType,wColor,wSize,rollerColor,label,colorLabel,colorBorder,borderType,colorRollerSlider,colorSliderInfo,idDown,idStop,idUp,bckImg,borderThickness){			
+			var classType#id#= wType + ' '+ wColor + ' '+ wSize + ' cmd cmd-widget';	  
+			
+			console.log('Define design : ' + classType#id# + "|eq : " + eqId);
+			if (wType == "garage") {
+				$(eqId + ' .cmd-widget').hide();
+			}
+			
+			$(eqId + ' .fenetre').attr("class",classType#id#);
+          
+          	//fonctionne pas du tout
+			$(eqId + ' .rollerState').attr("class",rollerColor + "Roller" + " rollerState");	
+
+
+			//manage label
+			if(label.length > 0 && !label.includes("label")) {
+				$(eqId + ' .spanLabelRS').html(label);
+			} else {
+				$( eqId + ' .spanLabelRS').hide();
+			}
+          
+			if(colorLabel.length > 0) {
+				$(eqId+ ' .spanLabelRS').css('background-color', colorLabel);
+              	$(eqId+ ' .spanLabelRS').css('border-radius','10px');
+			} else {
+              	$(eqId+ ' .spanLabelRS').css('background-color', 'transparent');
+            }
+			
+			//manage border
+			if (colorBorder.length > 0) {
+				$(eqId+ ' .eqLogicWidget').css('border-color',colorBorder);
+			}
+          
+			if (borderType.length > 0) {
+				$(eqId+ ' .eqLogicWidget').css('border-style',borderType);
+              	$(eqId+ ' .eqLogicWidget').css('border-radius','10px');
+			} else {
+				$(eqId+ ' .eqLogicWidget').css('border-style','none');
+			}
+          
+          	if (borderThickness.length > 0) {
+              	$(eqId + ' .eqLogicWidget').css('border-width',borderThickness + 'px');
+            }
+          
+          	
+          
+          	$(eqId + ' .eqLogicWidget').width(($(eqId + ' .' + wSize).width() + $('.rangeCustom').width() + 50) + "px")
+			$(eqId + ' .eqLogicWidget').height(($(eqId + ' .' + wSize).height() + 87)+"px")
+          
+			//define if button have to be displayed
+			if (idUp != '' && idStop != '' && idDown != '') {
+				$(eqId+ ' .cmdWidgetV2').show();
+			} else {
+				$(eqId+ ' .cmdWidgetV2').hide();
+			}
+			
+			//manage color of roller slider
+			if(colorRollerSlider.length > 0 &&  colorRollerSlider !='#000000') {
+              	$(eqId).find('.customSlidr').css('--track-background', colorRollerSlider);
+			}
+			
+			if(colorSliderInfo.length > 0 &&  colorSliderInfo !='#000000') {
+				$(eqId+ ' #rangeCustomvalue1').css('border', '2px solid ' +colorSliderInfo);
+			}
+			
+          	//Set background image
+          	if(bckImg.length > 0 && wType != 'velux') {
+              $(eqId+ ' .background').css('background-image', "url(" + bckImg+")");              
+            }
+		}
+		
+		
+		function defineRollerTime(id,cmdType,idCmd,idAction) {
+          	console.log("defineRollerTime : " + idCmd + " | type : " + cmdType + "|idAction : " + idAction );
+			jeedom.cmd.execute({ id: idCmd, value: {'title': cmdType, 'message': ''},
+                          success:  function($result) {
+                            console.log("result define time : " + $result);
+                            //$('.eqLogic[data-eqLogic_id=' +id +']'+ ' #idStateRoller').css("transition", "height "+ $result  + "s linear");
+							$('.eqLogic[data-eqLogic_id=' +id +']'+ ' .rollerState').css("transition", "height "+ $result  + "s linear");
+                            
+                            if (idAction !=null) {
+                              jeedom.cmd.execute({id: idAction});
+                              if (cmdType == 'up') {
+                                	$('.eqLogic[data-eqLogic_id=' +id +']'+ ' .rollerState').css("height", "0%");
+                              } else if (cmdType == 'down') {
+                                	$('.eqLogic[data-eqLogic_id=' +id +']'+ ' .rollerState').css("height", "100%");
+                              }
+                            } else {
+								console.log('Pas d\'action sur le VR => jsute calcul temps d\'action');
+							}
+                          }
+                         });							
+			
+		}
+	</script>
+
+<style>
+
+/* css mise en situation et explication */
+.div_object {
+  margin: auto;
+  position: relative;
+}
+  
+.eqLogicWidget {
+  background-color:transparent;
+  border-style: dashed;
+  border-color:rgb(138, 134, 133);
+  border-width: 1px;
+  padding: 5px;
+  float: left;
+  width: 95%;
+  margin: 2.5%;
+  border-radius: 10px;
+}
+  
+.spanLabelRS{
+  display: block;
+  text-align:center;
+  background-color: #424242;
+  border-radius: 10px;
+  color:white;
+  height:20px;
+  width:95%;
+  margin-top:1px;
+ }
+	   
+.cmdWidgetV2 {
+  top:7px;
+  height:40px;
+  vertical-align: middle;
+  display: table-cell;
+  position: relative;
+}
+  
+.bouton{
+	height:28px;
+	width:28px;
+	background-color:#424242;
+	border-radius:50%;
+	float:left;
+	margin-left:8px;
+	border-color:white;
+	border-style:solid;
+	border-width:1px;
+	display: inline-block;
+ }
+  
+ .bouton:hover{
+	opacity:0.5;
+	cursor: pointer;
+  }
+  
+ .faPosition{
+	margin-top:7px;
+  }
+  
+.tooltip {
+  opacity: 1;
+  background: rgba(8, 70, 34, 0.93);
+  position: absolute;
+  display: block;
+  margin: auto;
+  padding: 10px;
+  width: 200px;
+  height: 65px;
+  left: 2.5%;
+  text-align:center;
+  border-radius: 5px;
+}
+.tooltip.pos {
+  margin-top: 156px;
+}
+
+
+
+/* dimension des ouvrants */
+.size-s {
+  width: 100px;
+  height: 75px;
+}
+.size-m {
+  width: 200px;
+  height: 150px;
+}
+.size-l {
+  width: 400px;
+  height: 300px;
+}
+.size-xl {
+  width: 500px;
+  height: 300px;
+}
+
+.porte.size-s {
+  width: 120px;
+  height: 275px;
+}
+.porte.size-m {
+  width: 180px;
+  height: 300px;
+}
+
+.size-uk{
+  width: 268px;
+  height: 196px;
+}
+
+.size-mk{
+  width: 156px;
+  height: 196px;
+}
+
+	/* couleurs */
+.white {
+  border: 5px solid #e8e7e7;
+  box-shadow: inset 0 0 0 5px gainsboro, 0 1px 2px 0px rgba(0, 0, 0, 0.75);
+}
+
+.black {
+  border: 5px solid #353535;
+  box-shadow: inset 0 0 0 5px #2d2d2d, 0 1px 2px 0px rgba(0, 0, 0, 0.75);
+}
+
+.black:before,
+.black:after {
+  border: 10px solid #353535!important;
+}
+
+.beige {
+  border: 5px solid #DEB887;
+  box-shadow: inset 0 0 0 5px #D2B48C, 0 1px 2px 0px rgba(0, 0, 0, 0.75);
+}
+
+.beige:before,
+.beige:after {
+  border: 10px solid #DEB887!important;
+}
+
+.wood {
+  border: 5px solid #6d3e15;
+  box-shadow: inset 0 0 0 5px #583312, 0 1px 2px 0px rgba(0, 0, 0, 0.75);
+}
+
+.wood:before,
+.wood:after {
+  border: 10px solid #6d3e15!important;
+}
+
+/* Volet roulant */
+.rollerState {
+  display: block;
+  position: absolute;
+  width: calc(100% - 10px);
+  height: 0%;
+  max-height: calc(100% - 10px);
+  margin: 0px;
+  padding: 0;
+  left: 5px;
+  right: 5px;
+  top: 5px;
+  border-bottom: 4px solid white;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+  transform: translateZ(-10px);
+  background-size: 10px 15px !important;
+  //transition:height 0s linear .75s ;
+}
+.garage .rollerState {
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  max-height: 100%;
+  transform: translateZ(-1px);
+}
+
+ .rollerState.whiteRoller{
+  background: linear-gradient(0deg, #d8d8d8 10%, transparent 25%) 5px 0,
+	linear-gradient(0deg, transparent 45%, #d2d2d2 76%),
+	linear-gradient(
+	  0deg,
+	  transparent 26%,
+	  #d0d0d0 38%,
+	  #c3c3c3 59%,
+	  transparent 60%
+	),
+	#7d7d7d;
+}
+
+
+.rollerState.whiteRoller{
+  border: 4px solid #464646;
+  border-top: 4px solid white;
+  border-bottom: 4px solid white;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+}
+
+	
+.rollerState.blackRoller{
+  background: linear-gradient(0deg, #292929 10%, transparent 25%) 5px 0,
+	linear-gradient(0deg, transparent 45%, #383838 76%),
+	linear-gradient(
+	  0deg,
+	  transparent 26%,
+	  #222 38%,
+	  #252525 59%,
+	  transparent 60%
+	),
+	#2f2f2f;
+}
+
+
+.rollerState.blackRoller{
+  border: 4px solid #464646;
+  border-left: 2px solid #232323;
+  border-right: 2px solid #232323;
+}
+
+.rollerState.woodRoller{
+  background: linear-gradient(0deg, #573212 10%, transparent 25%) 5px 0,
+	linear-gradient(0deg, transparent 45%, #6d3e15 76%),
+	linear-gradient(
+	  0deg,
+	  transparent 26%,
+	  #4c2b0e 38%,
+	  #3e240c 59%,
+	  transparent 60%
+	),
+	#774212;
+}
+
+.rollerState.woodRoller{
+  border: 4px solid #573212;
+  border-left: 2px solid #6d3e15;
+  border-right: 2px solid #6d3e15;
+}
+
+
+.rollerState.velux {
+  background: linear-gradient(0deg, #292929 10%, transparent 25%) 5px 0,
+	linear-gradient(0deg, transparent 45%, #383838 76%),
+	linear-gradient(
+	  0deg,
+	  transparent 26%,
+	  #222 38%,
+	  #252525 59%,
+	  transparent 60%
+	),
+	#2f2f2f;
+}
+
+.rollerState.velux {
+  border: 4px solid #464646;
+  border-left: 2px solid #232323;
+  border-right: 2px solid #232323;
+  border-top: 
+  border-bottom:
+}
+
+/* css widget windows & baie + volet*/
+.cmdWidgetV2 a.btn-default {
+			display: inline-block;
+			width: 32px;
+			margin: -2px;
+			border: none;
+			border-radius: 0;
+}
+.cmdWidgetV2 a.btn-default:hover{background: white!important;color: #4a4a4a;}
+.cmdWidgetV2 a.btn-default:first-child{border-radius: 4px  0 0 4px}
+.cmdWidgetV2 a.btn-default:last-child{border-radius: 0 4px 4px 0 }
+/* modèles */
+.windows,
+.baie,
+.porte,
+.garage,
+.velux{
+  position: relative;
+  display: block;
+  background: transparent;
+  padding: 5px;
+  margin: 20px 40px 35px;
+  transform-style: preserve-3d;
+  perspective: 300px;
+  z-index: 1;
+  float: left;
+}
+  
+  
+.garage {
+  border-bottom: none!important;
+  box-shadow: none;
+  padding: 0;
+}
+  
+/* vitre de baie & fenetre */
+.windows:before,
+.windows:after,
+.baie:before,
+.baie:after,
+.porte.size-s:before,
+.velux:before,
+.porte:before,
+.porte:after{
+  display: block;
+  position: absolute;
+  content: "";
+  border: 10px solid white;
+  width: 47.25%;
+  height: calc(100% - 10px);
+  top: 5px;
+  margin: 0;
+	box-shadow: 0 1px 2px black, inset 0 0 5px rgba(0, 0, 0, 0.75);
+  z-index: 20;
+  background: linear-gradient(
+	  135deg,
+	  rgba(183, 222, 237, 0.25) 0%,
+	  rgba(255, 255, 255, 0.35) 20%,
+	  rgba(113, 206, 239, 0.25) 50%,
+	  rgba(33, 180, 226, 0.15) 51%,
+	  rgba(183, 222, 237, 0.15) 100%
+	),
+	linear-gradient(
+	  -165deg,
+	  rgba(224, 243, 250, 0.45) 0%,
+	  rgba(216, 240, 252, 0.25) 50%,
+	  rgba(184, 226, 246, 0.35) 51%,
+	  rgba(182, 223, 253, 0.35) 100%
+	);
+  
+}
+  
+  
+
+/* vitre de baie & fenetre */
+.windows.size-l:before,
+.windows.size-l:after,
+.porte.size-l:before,
+.porte.size-l:after{
+  display: block;
+  position: absolute;
+  content: "";
+  border: 10px solid white;
+  width: 48.72%;
+  height: calc(100% - 10px);
+  top: 5px;
+  margin: 0;
+	box-shadow: 0 1px 2px black, inset 0 0 5px rgba(0, 0, 0, 0.75);
+  z-index: 20;
+  background: linear-gradient(
+	  135deg,
+	  rgba(183, 222, 237, 0.25) 0%,
+	  rgba(255, 255, 255, 0.35) 20%,
+	  rgba(113, 206, 239, 0.25) 50%,
+	  rgba(33, 180, 226, 0.15) 51%,
+	  rgba(183, 222, 237, 0.15) 100%
+	),
+	linear-gradient(
+	  -165deg,
+	  rgba(224, 243, 250, 0.45) 0%,
+	  rgba(216, 240, 252, 0.25) 50%,
+	  rgba(184, 226, 246, 0.35) 51%,
+	  rgba(182, 223, 253, 0.35) 100%
+	);
+}
+
+/* vitre de baie & fenetre */
+.windows.size-xl:before,
+.windows.size-xl:after,
+.porte.size-xl:before,
+.porte.size-xl:after{
+  display: block;
+  position: absolute;
+  content: "";
+  border: 10px solid white;
+  width: 48.98%;
+  height: calc(100% - 10px);
+  top: 5px;
+  margin: 0;
+	box-shadow: 0 1px 2px black, inset 0 0 5px rgba(0, 0, 0, 0.75);
+  z-index: 20;
+  background: linear-gradient(
+	  135deg,
+	  rgba(183, 222, 237, 0.25) 0%,
+	  rgba(255, 255, 255, 0.35) 20%,
+	  rgba(113, 206, 239, 0.25) 50%,
+	  rgba(33, 180, 226, 0.15) 51%,
+	  rgba(183, 222, 237, 0.15) 100%
+	),
+	linear-gradient(
+	  -165deg,
+	  rgba(224, 243, 250, 0.45) 0%,
+	  rgba(216, 240, 252, 0.25) 50%,
+	  rgba(184, 226, 246, 0.35) 51%,
+	  rgba(182, 223, 253, 0.35) 100%
+	);
+}
+
+.porte.size-s:after{display:none;}
+.porte.size-s:before{width: 93.5%;}
+
+.velux.size-uk:before{
+  width: 97.5%;
+  left:3px;
+}
+.velux.size-uk:after{display:none;}
+
+.velux.size-mk:before{
+  width: 94.5%;
+  left:4px;}
+}
+  
+.velux.size-mk:after{display:none;}
+
+.baie:before,
+.baie:after {
+  width: 50% !important;
+}
+.baie:after {
+  height: calc(100% - 9px) !important;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.25), inset 0 0 5px rgba(0, 0, 0, 0.75);
+}
+.baie:before {
+  box-shadow: 0 1px 2px transparent, inset 0 0 5px rgba(0, 0, 0, 0.75);
+  border: 10px solid #f1f0f0;
+}
+.windows:before,
+.baie:before,
+.porte:before{
+  left: 5px;
+  transition: all 1s ease;
+}
+.windows:after,
+.baie:after,
+.porte:after {
+  right: 5px;
+  transition: all 1s ease;
+}
+/* état ouvert */
+.baie.slideRight:after {
+  right: 40%;
+  transition: all 1s ease;
+}
+
+.baie.slideLeft:before {
+  left: 40%;
+  transition: all 1s ease;
+}
+
+.windows.open:before,
+.porte.size-s.open:before,
+.porte.size-m.open:before{
+  transform: rotateY(-80deg)translateZ(5px);
+  transition: all 1s ease;
+  transform-origin: 0 0;
+}
+
+.windows.openLeft:before,
+.porte.size-s.openLeft:before,
+.porte.size-m.openLeft:before{
+  transform: rotateY(-80deg)translateZ(5px);
+  transition: all 1s ease;
+  transform-origin: 0 0;
+}
+
+.windows.openRight:after,
+.porte.size-s.openRight:before,
+.porte.size-m.openRight:after {
+  transform: rotateY(80deg)translateZ(5px);
+  transition: all 1s ease;
+  transform-origin: 100% 0;
+}
+
+/*
+.windows.open:after,
+.porte.size-s.open:before,
+.porte.size-m.open:after {
+  transform: rotateY(80deg)translateZ(5px);
+  transition: all 1s ease;
+  transform-origin: 100% 0;
+}
+*/
+
+.velux.open:before{
+  transform: rotateX(-30deg)translateZ(5px);
+  transition: all 1s ease;
+  transform-origin: 0 0;
+  //transform: skewX(50deg);
+  //transform-origin: 100% -30%;
+}
+
+  
+.rollerState.open{
+  transform: rotateX(-30deg)translateY(15px)translateX(0px)translateZ(-40px);
+  transition: all 1s ease;
+  //transform-origin: 80% 110%;
+ }
+
+
+
+/*gestion place slider si ouvrant ouvert */
+.windows.open .rangeCustom,
+.porte.size-m.open .rangeCustom{
+  margin-left: -35px;
+}
+
+/*
+.windows.open .rangeCustom:hover,
+.porte.size-m.open .rangeCustom:hover {
+  margin-left: -37px;
+}
+*/
+
+/* control slider pour volet roulant */
+.rangeCustom {
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  width: 20px;
+  margin-top: 0px;
+  transition: all 1s ease;
+  margin-left: -25px;
+  height: 100%;
+  padding: 0;
+}
+  
+
+/* affichage du pourcentage */
+.rangeCustom output {
+  position: absolute;
+  background:white;
+  height:30px;
+  line-height: 12px;
+  width:30px;
+  font-weight:bold;
+  text-align: center;
+  color: black; 
+  border-radius:50%;
+  border: 2px solid green;
+  right: 10px;
+  z-index:3000;
+  cursor: default;
+  pointer-events: none;
+  //padding-top: 1.1em;
+  //padding-top: 1.1em;
+  margin-top:-4px;
+  font-size: 11px;
+}
+  
+/* input rangeCustom vertical */
+.rangeCustom input.customSlidr[type="range"][orient="vertical"] {
+  writing-mode: bt-lr; /* IE */
+  -webkit-appearance:slider-vertical;
+  width: 0;
+  height: calc(100% - 10px);
+  position: absolute;
+  display: block;
+  top: 5px;
+  transform: rotate(-180deg);
+  z-index: 1000;
+}
+ 
+  /*
+ .rangeCustom input.customSlidr[type="range"][orient="vertical"] {
+  padding: 0;
+  margin: 0px 15px;
+  z-index: 1000;
+  pointer-events: none;
+  cursor: default;
+  transition: all 0.3s ease;
+  opacity: 1;
+}
+  */
+
+.rangeCustom input.customSlidr[type="range"]:focus {
+  outline: none;
+}
+
+  /*
+.rangeCustom input.customSlidr[type="range"][orient="vertical"]::-webkit-slider-runnable-track{
+  width: 5px;
+  height: 100%;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border-radius: 5px;
+  //background: green;
+  background:var(--track-background, green);
+  -webkit-appearance: none;
+  margin-left:10px;
+}
+
+.rangeCustom input.customSlidr[type="range"]:focus::-webkit-slider-runnable-track{
+   background:var(--track-background, green);
+}
+*/
+  .customSlidr::-webkit-slider-runnable-track{
+  width: 5px;
+  height: 100%;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+  border-radius: 5px;
+  //background: green;
+  background:var(--track-background, green);
+  -webkit-appearance: none;
+  margin-left:10px;
+}
+
+.customSlidr:focus::-webkit-slider-runnable-track{
+   background:var(--track-background, green);
+}
+  
+/*bouton du curseur*/
+.rangeCustom input.customSlidr[type="range"][orient="vertical"]::-webkit-slider-thumb{
+	-webkit-appearance: none;
+	pointer-events: visible;
+	cursor: pointer;
+	border: none;
+	height: 5px;
+	width: 5px;
+	border-radius: 50%;
+	margin:0 -8px;
+}
+  
+/* fond de fenêtre */
+.background {
+  display: block;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  transform: translateZ(-11px);
+  //animation: day 360s infinite;
+  box-shadow: inset 0 0 20px 10px rgba(0, 0, 0, 0.25);
+}
+  
+.rotateBackground:before {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+/* animation simulation jour nuit 
+@-keyframes day {
+  0% {
+	filter:brightness(1)contrast(1) grayscale(0);
+  }
+  50% {
+	filter:brightness(0.5) contrast(1.5) grayscale(1);
+  }
+  100% {
+	filter:brightness(1)contrast(1) grayscale(0);
+  }
+}
+@-webkit-keyframes day {
+  0% {
+	-webkit-filter:brightness(1) contrast(1) grayscale(0);
+  }
+  50% {
+	-webkit-filter:brightness(0.5) contrast(1.5) grayscale(1);
+  }
+  100% {
+	-webkit-filter:brightness(1)contrast(1) grayscale(0);
+  }
+}
+  */
+.up{height:0!important;}
+.down{height:100%!important;}
+.stop{height:50%!important;}
+
+</style>
