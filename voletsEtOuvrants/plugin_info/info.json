@@ -1,0 +1,13 @@
+{
+	"id" :"voletsEtOuvrants",
+	"name" : "Volets roulants et ouvrants",
+	"description" : "Plugin gérant l'ouverture et la fermeture des voltes roulants ainsi que l'ouverture ou non de la fenêtre",
+	"licence" : "AGPL",
+	"author" : "Christophe Demongeot",
+	"require" : "4",
+	"category" : "automatisation",
+	"compatibility" : ["miniplus","smart","rpi","docker","diy","mobile","v4"],
+	"hasOwnDeamon" : true,
+ 	"documentation" : "",
+	"changelog" : ""
+}
