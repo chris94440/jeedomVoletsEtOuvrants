@@ -210,6 +210,7 @@ class voletsEtOuvrants extends eqLogic {
 		$Volet = eqLogic::byId($_option['Volets_id']);
 		if (is_object($Volet) && $Volet->getIsEnable()) {
 			$Volet->writeLog('info','Detection sur le listener EventRoller : '.json_encode($_option),$Volet->getHumanName());
+			$Volet->writeLog('info','	* Cmd event : ' . $Volet->getConfiguration('EventMvtCmd'),$Volet->getHumanName());
 			$Volet->writeLog('info','	* Value : ' . $_option['value'],$Volet->getHumanName());
 			$Volet->writeLog('info','	* Valeur testées : ' . $Volet->getConfiguration('cfgStatutUp') . '|'. $Volet->getConfiguration('cfgStatutDown') . '|' . $Volet->getConfiguration('cfgStatutStop'),$Volet->getHumanName());
 			
@@ -267,6 +268,13 @@ class voletsEtOuvrants extends eqLogic {
 				
 				cache::set('voletsEtOuvrants::Move::'.$Volet->getId(),false, 0);
 				cache::set('voletsEtOuvrants::ChangeWay::'.$Volet->getId(),"", 0);
+				
+				/*
+				//init event value in order to catch it again
+				$Volet->writeLog('info','		=> init cmd event for catching it again : ' . $Volet->getConfiguration('EventMvtCmd'),$Volet->getHumanName());
+				cmd::byId(str_replace('#','',$Volet->getConfiguration('EventMvtCmd')))->event(99);
+				$Volet->writeLog('info','		=> after init cmd event for catching it again : ' . $Volet->getConfiguration('EventMvtCmd'),$Volet->getHumanName());
+				*/
 			} else {
 				$Volet->writeLog('info','		=> action non gérée dans ce listener : '. $_option['value'],$Volet->getHumanName());								
 			}
